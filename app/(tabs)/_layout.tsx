@@ -1,5 +1,6 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import MaterialIcons  from '@expo/vector-icons/MaterialIcons';
 import { Link, Tabs } from 'expo-router';
 import { Pressable } from 'react-native';
 
@@ -9,10 +10,10 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
+  name: React.ComponentProps<typeof MaterialIcons>['name'];
   color: string;
 }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  return <MaterialIcons size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
 export default function TabLayout() {
@@ -25,12 +26,13 @@ export default function TabLayout() {
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
+        tabBarShowLabel: false
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Shopping List',
+          tabBarIcon: ({ color }) => <TabBarIcon name="checklist" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -48,10 +50,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="meal"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Meal Plan',
+          tabBarIcon: ({ color }) => <TabBarIcon name="edit-calendar" color={color} />,
         }}
       />
     </Tabs>
