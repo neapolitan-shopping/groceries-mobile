@@ -56,6 +56,12 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="edit-calendar" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="[id]"
+        options={{
+          href: null
+        }}
+      />
     </Tabs>
   );
 }
