@@ -2,17 +2,53 @@ import { FlatList, StyleSheet } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import { useEffect, useState } from 'react';
 import { Link } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 export default function ListsScreen() {
+
+  const query = useQuery({
+    queryKey: ["lists"],
+    queryFn: async () => {
+      try {
+        const { data } = await axios.get("http://localhost:3000/api/lists");
+        return data
+      } catch (e: any) {
+        throw new Error(e.response.data)
+      }
+    },
+    refetchOnWindowFocus: false,
+  })
+
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Select List</Text>
-      <Link href={{ pathname: "/(list)/[id]", params: { id: "65d128fc2d72462bc583614f" } }}>
-        <Text>
-          Accedi alla tua fantastica lista
-        </Text>
-      </Link>
+
+      <FlatList
+        style={styles.flatList}
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center",
+          gap: 8,
+        }}
+        data={query.data?.list}
+        renderItem={({ item }) => (
+          <View>
+            <Text>
+              {item.name}
+            </Text>
+            <Link href={{ pathname: "/(list)/[id]", params: { id: item._id } }}>
+              <Text>
+                Accedi alla tua fantastica lista con questo link
+              </Text>
+            </Link>
+            <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+          </View>
+        )}
+      />
+
+
     </View>
   );
 }

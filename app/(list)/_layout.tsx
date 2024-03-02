@@ -1,6 +1,6 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import MaterialIcons  from '@expo/vector-icons/MaterialIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Link, Tabs } from 'expo-router';
 import { Pressable } from 'react-native';
 
@@ -32,7 +32,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Shopping List',
-          tabBarIcon: ({ color }) => <TabBarIcon name="checklist" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="rule-folder" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -49,17 +49,18 @@ export default function TabLayout() {
           ),
         }}
       />
+        <Tabs.Screen
+          name="[id]"
+          options={{
+            title: "Single List",
+            tabBarIcon: ({ color }) => <TabBarIcon name="checklist" color={color} />
+          }}
+        />
       <Tabs.Screen
         name="meal"
         options={{
           title: 'Meal Plan',
           tabBarIcon: ({ color }) => <TabBarIcon name="edit-calendar" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="[id]"
-        options={{
-          href: null
         }}
       />
     </Tabs>

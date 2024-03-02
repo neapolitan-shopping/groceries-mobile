@@ -1,35 +1,55 @@
 import { FlatList, StyleSheet } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import { Text, View } from '@/components/Themed';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
 
 export default function SingleListScreen() {
 
-   const lol = useLocalSearchParams()
+   const { id } = useLocalSearchParams();
 
-   console.log('lol :>> ', lol.id);
-
-   const { data: listData, error } = useSuspenseQuery({
-      queryKey: ['lists'],
+   const {
+      data: listData,
+      error,
+      isLoading,
+      refetch
+   } = useQuery({
+      queryKey: ['singleList'],
       queryFn: async () => {
          try {
-            const data = await fetch(`http://localhost:3000/api/lists/${lol.id}`);
-            const parsed = await data.json();
-            return parsed
-         } catch (e) {
-            console.error(e)
+            const { data } = await axios.get(`http://localhost:3000/api/lists/${id}`);
+            return data
+         } catch (e: any) {
+            throw new Error(e.response.data)
          }
-      }
+      },
+      enabled: !!id,
    });
 
-   if (error) {
-      throw error
-    }
+   useEffect(() => {
+      if (id) {
+         refetch();
+      }
+   }, [id])
 
+   if (error) {
+      return <>Ooops, something went wrong {error.message}</>
+   };
+
+   if (isLoading) {
+      return <View style={styles.container}>Loading...</View>
+   }
+
+   if (!id) {
+      return <View style={styles.container}>Select a list to start</View>
+   }
+
+   if (!listData || listData.length === 0) {
+      return <View style={styles.container}>No Data found </View>
+   }
 
    return (
-      <Suspense fallback={<>Loading...</>}>
       <View style={styles.container}>
          <Text style={styles.title}>{listData.name}</Text>
          <FlatList
@@ -50,7 +70,6 @@ export default function SingleListScreen() {
             )}
          />
       </View>
-      </Suspense>
    );
 }
 
