@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { baseUri } from '@/constants/BaseUrl';
 
 export default function ListsScreen() {
 
@@ -11,7 +12,7 @@ export default function ListsScreen() {
     queryKey: ["lists"],
     queryFn: async () => {
       try {
-        const { data } = await axios.get("http://localhost:3000/api/lists");
+        const { data } = await axios.get(`${baseUri}/lists`);
         return data
       } catch (e: any) {
         throw new Error(e.response.data)

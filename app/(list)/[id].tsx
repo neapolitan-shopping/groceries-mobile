@@ -2,13 +2,13 @@ import { FlatList, StyleSheet } from 'react-native';
 import { router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import { Text, View } from '@/components/Themed';
 import { useQuery } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useEffect} from 'react';
+import { baseUri } from '@/constants/BaseUrl';
 
 export default function SingleListScreen() {
 
    const { id } = useLocalSearchParams();
-
    const {
       data: listData,
       error,
@@ -18,7 +18,7 @@ export default function SingleListScreen() {
       queryKey: ['singleList'],
       queryFn: async () => {
          try {
-            const { data } = await axios.get(`http://localhost:3000/api/lists/${id}`);
+            const { data } = await axios.get(`${baseUri}/lists/${id}`);
             return data
          } catch (e: any) {
             throw new Error(e.response.data)
@@ -34,19 +34,19 @@ export default function SingleListScreen() {
    }, [id])
 
    if (error) {
-      return <>Ooops, something went wrong {error.message}</>
+      return <Text>Ooops, something went wrong {error.message}</Text>
    };
 
    if (isLoading) {
-      return <View style={styles.container}>Loading...</View>
+      return <Text style={styles.container}>Loading...</Text>
    }
 
    if (!id) {
-      return <View style={styles.container}>Select a list to start</View>
+      return <Text style={styles.container}>Select a list to start</Text>
    }
 
    if (!listData || listData.length === 0) {
-      return <View style={styles.container}>No Data found </View>
+      return <Text style={styles.container}>No Data found </Text>
    }
 
    return (
