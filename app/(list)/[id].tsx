@@ -3,8 +3,9 @@ import { router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router
 import { Text, View } from '@/components/Themed';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useEffect} from 'react';
+import { useEffect } from 'react';
 import { baseUri } from '@/constants/BaseUrl';
+import BouncyCheckbox from '@/components/BouncyCheckbox';
 
 export default function SingleListScreen() {
 
@@ -49,6 +50,16 @@ export default function SingleListScreen() {
       return <Text style={styles.container}>No Data found </Text>
    }
 
+   const Nice = ({ item }: { item: any }) => {
+      return (
+         <View>
+            <Text>
+               {item.itemName}
+            </Text>
+         </View>
+      )
+   }
+
    return (
       <View style={styles.container}>
          <Text style={styles.title}>{listData.name}</Text>
@@ -61,11 +72,15 @@ export default function SingleListScreen() {
             }}
             data={listData.items}
             renderItem={({ item }) => (
-               <View>
-                  <Text>
-                     {item.itemName}
-                  </Text>
-                  <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+               <View style={styles.itemContainer}>
+                  <BouncyCheckbox
+                     onPress={(isChecked) => console.log('isChecked :>> ', isChecked)}
+                     text={item.itemName}
+                     textContainerStyle={{
+                        marginLeft: 8
+                     }}
+                  />
+                     <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
                </View>
             )}
          />
@@ -93,4 +108,8 @@ const styles = StyleSheet.create({
       height: 1,
       width: '100%',
    },
+   itemContainer: {
+      display: "flex",
+      gap: 8
+   }
 });

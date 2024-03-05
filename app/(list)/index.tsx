@@ -8,6 +8,8 @@ import { baseUri } from '@/constants/BaseUrl';
 
 export default function ListsScreen() {
 
+  console.log('baseUri :>> ', baseUri);
+
   const query = useQuery({
     queryKey: ["lists"],
     queryFn: async () => {
