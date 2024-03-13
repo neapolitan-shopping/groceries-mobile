@@ -1,7 +1,8 @@
 import Constants from "expo-constants";
+import { hostname } from "./hostname";
 
-const hostName = Constants?.expoConfig?.hostUri
+const localHostname = Constants?.expoConfig?.hostUri
 ? Constants.expoConfig.hostUri.split(`:`).shift()
-: `192.168.1.6`;
+: hostname;
 
-export const baseUri = `http://${hostName}:3000/api`
+export const baseUri = `http://${localHostname}:3000/api`

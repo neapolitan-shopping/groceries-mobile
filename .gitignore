@@ -30,7 +30,8 @@ yarn-error.*
 
 # local env files
 .env*.local
-
+.env
+.env.*
 # typescript
 *.tsbuildinfo
 
@@ -41,3 +42,4 @@ expo-env.d.ts
 # @end expo-cli
 
 .vscode
+constants/hostname.ts
