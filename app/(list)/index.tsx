@@ -1,28 +1,26 @@
-import { FlatList, StyleSheet } from 'react-native';
-import { Text, View } from '@/components/Themed';
-import { useEffect, useState } from 'react';
-import { Link } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import { baseUri } from '@/constants/BaseUrl';
+import { FlatList, StyleSheet } from "react-native";
+import { Text, View } from "@/components/Themed";
+import { useEffect, useState } from "react";
+import { Link } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { baseUri } from "@/constants/BaseUrl";
 
 export default function ListsScreen() {
-
-  console.log('baseUri :>> ', baseUri);
+  console.log("baseUri :>> ", baseUri);
 
   const query = useQuery({
     queryKey: ["lists"],
     queryFn: async () => {
       try {
         const { data } = await axios.get(`${baseUri}/lists`);
-        return data
+        return data;
       } catch (e: any) {
-        throw new Error(e.response.data)
+        throw new Error(e.response.data);
       }
     },
     refetchOnWindowFocus: false,
-  })
-
+  });
 
   return (
     <View style={styles.container}>
@@ -38,20 +36,18 @@ export default function ListsScreen() {
         data={query.data?.list}
         renderItem={({ item }) => (
           <View>
-            <Text>
-              {item.name}
-            </Text>
+            <Text>{item.name}</Text>
             <Link href={{ pathname: "/(list)/[id]", params: { id: item._id } }}>
-              <Text>
-                Accedi alla tua fantastica lista con questo link
-              </Text>
+              <Text>Accedi alla tua fantastica lista con questo link</Text>
             </Link>
-            <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+            <View
+              style={styles.separator}
+              lightColor="#eee"
+              darkColor="rgba(255,255,255,0.1)"
+            />
           </View>
         )}
       />
-
-
     </View>
   );
 }
@@ -59,8 +55,8 @@ export default function ListsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   flatList: {
     width: "80%",
@@ -68,12 +64,12 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 90,
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   separator: {
     marginTop: 4,
     marginBottom: 8,
     height: 1,
-    width: '100%',
+    width: "100%",
   },
 });
