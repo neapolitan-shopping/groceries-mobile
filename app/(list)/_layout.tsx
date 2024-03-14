@@ -3,13 +3,14 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Link, Tabs } from "expo-router";
 import React from "react";
 import { Pressable } from "react-native";
-
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { useColorScheme } from "@/components/useColorScheme";
 import Colors from "@/constants/Colors";
+import { FontAwesome5 } from "@expo/vector-icons";
+import AddListModal from "@/components/AddListModal/AddListModal";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
+function TabBarMaterialIcon(props: {
   name: React.ComponentProps<typeof MaterialIcons>["name"];
   color: string;
 }) {
@@ -34,21 +35,10 @@ export default function TabLayout() {
         options={{
           title: "Shopping List",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="rule-folder" color={color} />
+            <TabBarMaterialIcon name="rule-folder" color={color} />
           ),
           headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? "light"].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+            <AddListModal />
           ),
         }}
       />
@@ -57,7 +47,7 @@ export default function TabLayout() {
         options={{
           title: "Single List",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="checklist" color={color} />
+            <TabBarMaterialIcon name="checklist" color={color} />
           ),
         }}
       />
@@ -66,7 +56,7 @@ export default function TabLayout() {
         options={{
           title: "Meal Plan",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="edit-calendar" color={color} />
+            <TabBarMaterialIcon name="edit-calendar" color={color} />
           ),
         }}
       />

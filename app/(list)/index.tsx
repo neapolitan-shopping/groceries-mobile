@@ -1,6 +1,5 @@
 import { FlatList, StyleSheet } from "react-native";
 import { Text, View } from "@/components/Themed";
-import { useEffect, useState } from "react";
 import { Link } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";

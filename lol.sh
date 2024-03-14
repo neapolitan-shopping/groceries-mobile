@@ -1,7 +1,7 @@
 #!/bin/bash
 function hello {
         local HELLO=$(ipconfig getifaddr en0)
-        local env_var="export const hostname='$HELLO'"
+        local env_var="export const hostname = '$HELLO'"
         local path=constants/hostname.ts
 
         isInFile=$(cat $path | grep -c "$HELLO")
