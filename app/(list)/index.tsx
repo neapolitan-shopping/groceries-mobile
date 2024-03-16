@@ -1,12 +1,16 @@
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet, RefreshControl } from "react-native";
 import { Text, View } from "@/components/Themed";
 import { Link } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { baseUri } from "@/constants/BaseUrl";
+import { useState } from "react";
+import { ActivityIndicator } from "react-native-paper";
 
 export default function ListsScreen() {
   console.log("baseUri :>> ", baseUri);
+
+  const [refreshing, setRefreshing] = useState(true);
 
   const query = useQuery({
     queryKey: ["lists"],
@@ -16,6 +20,8 @@ export default function ListsScreen() {
         return data;
       } catch (e: any) {
         throw new Error(e.response.data);
+      } finally {
+        setRefreshing(false);
       }
     },
     refetchOnWindowFocus: false,
@@ -23,8 +29,8 @@ export default function ListsScreen() {
 
   return (
     <View style={styles.container}>
+      {refreshing ? <ActivityIndicator /> : null}
       <Text style={styles.title}>Select List</Text>
-
       <FlatList
         style={styles.flatList}
         contentContainerStyle={{
@@ -33,6 +39,12 @@ export default function ListsScreen() {
           gap: 8,
         }}
         data={query.data?.list}
+        refreshControl={
+          <RefreshControl
+            onRefresh={() => query.refetch()}
+            refreshing={refreshing}
+          />
+        }
         renderItem={({ item }) => (
           <View>
             <Text>{item.name}</Text>

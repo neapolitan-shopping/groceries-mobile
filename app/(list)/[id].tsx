@@ -35,6 +35,18 @@ export default function SingleListScreen() {
     }
   }, [id]);
 
+  useEffect(() => {
+    if (listData) {
+      navigation.setOptions({
+        headerRight: () => (
+          <View>
+            <Text>{listData.name}</Text>
+          </View>
+        ),
+      });
+    }
+  }, [listData]);
+
   if (error) {
     return <Text>Ooops, something went wrong {error.message}</Text>;
   }
@@ -50,14 +62,6 @@ export default function SingleListScreen() {
   if (!listData || listData.length === 0) {
     return <Text style={styles.container}>No Data found </Text>;
   }
-
-  navigation.setOptions({
-    headerRight: () => (
-      <View>
-        <Text>{listData.name}</Text>
-      </View>
-    ),
-  });
 
   return (
     <View style={styles.container}>

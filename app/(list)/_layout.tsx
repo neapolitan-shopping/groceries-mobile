@@ -1,12 +1,9 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Link, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import React from "react";
-import { Pressable } from "react-native";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { useColorScheme } from "@/components/useColorScheme";
 import Colors from "@/constants/Colors";
-import { FontAwesome5 } from "@expo/vector-icons";
 import AddListModal from "@/components/AddListModal/AddListModal";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -37,9 +34,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <TabBarMaterialIcon name="rule-folder" color={color} />
           ),
-          headerRight: () => (
-            <AddListModal />
-          ),
+          headerRight: () => <AddListModal />,
         }}
       />
       <Tabs.Screen
