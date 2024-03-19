@@ -32,12 +32,7 @@ export default function ListsScreen() {
       {refreshing ? <ActivityIndicator /> : null}
       <Text style={styles.title}>Select List</Text>
       <FlatList
-        style={styles.flatList}
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: "center",
-          gap: 8,
-        }}
+        contentContainerStyle={styles.contentContainerStyle}
         data={query.data?.list}
         refreshControl={
           <RefreshControl
@@ -68,12 +63,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    height: "100%",
   },
-  flatList: {
-    width: "80%",
+  contentContainerStyle: {
+    flexGrow: 1,
+    justifyContent: "center",
+    gap: 16,
   },
   title: {
-    marginTop: 90,
+    marginTop: 30,
     fontSize: 20,
     fontWeight: "bold",
   },
