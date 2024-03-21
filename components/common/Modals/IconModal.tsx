@@ -4,7 +4,7 @@ import {
   StyleSheet,
   Modal,
   ModalProps,
-  View as DefaultView
+  View as DefaultView,
 } from "react-native";
 import { View } from "../../Themed";
 import { ReactNode, useState } from "react";
@@ -38,7 +38,7 @@ export default function IconModal({
           <View style={styles.modalContent}>{children(parentProps)}</View>
         </View>
       </Modal>
-      <Pressable  onPress={() => setIsModalOpen(true)}>
+      <Pressable onPress={() => setIsModalOpen(true)}>
         {({ pressed }) => renderIcon({ pressed })}
       </Pressable>
     </DefaultView>

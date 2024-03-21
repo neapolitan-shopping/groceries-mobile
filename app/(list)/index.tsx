@@ -15,7 +15,6 @@ import { useState } from "react";
 import { ActivityIndicator } from "react-native-paper";
 import AddListFABModal from "@/components/AddListFABModal";
 import { MaterialIcons } from "@expo/vector-icons";
-import Colors from "@/constants/Colors";
 
 export default function ListsScreen() {
   console.log("baseUri :>> ", baseUri);

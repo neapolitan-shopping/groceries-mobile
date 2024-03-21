@@ -4,7 +4,7 @@ export const _iconContainer = (
   size: number,
   checked: boolean,
   fillColor: string,
-  unfillColor: string,
+  unfillColor: string
 ): ViewStyle => {
   return {
     width: size,
@@ -40,7 +40,7 @@ export default StyleSheet.create<any>({
     size: number,
     checked: boolean,
     fillColor: string,
-    unfillColor: string,
+    unfillColor: string
   ) => ({
     width: size,
     height: size,
