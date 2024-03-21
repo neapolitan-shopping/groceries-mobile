@@ -1,12 +1,13 @@
 import {
-  Pressable,
-  PressableStateCallbackType,
   StyleSheet,
   Modal,
   ModalProps,
+  View as DefaultView,
+  ViewStyle,
 } from "react-native";
-import { View } from "../Themed";
+import { View } from "../../Themed";
 import { ReactNode, useState } from "react";
+import { FAB, FABProps } from "react-native-paper";
 
 interface ParentProps {
   isModalOpen: boolean;
@@ -15,14 +16,18 @@ interface ParentProps {
 
 interface IconModalProps {
   children: (props: ParentProps) => ReactNode;
-  renderIcon: ({ pressed }: PressableStateCallbackType) => any;
+  FABIconName: string;
   modalProps?: ModalProps;
+  FABProps?: Partial<FABProps>;
+  positionStyle?: ViewStyle;
 }
 
-export default function IconModal({
+export default function FABModal({
   children,
-  renderIcon,
   modalProps,
+  FABIconName = "plus",
+  FABProps,
+  positionStyle,
 }: IconModalProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -31,20 +36,28 @@ export default function IconModal({
     setIsModalOpen,
   };
   return (
-    <View>
+    <DefaultView style={[styles.container, positionStyle]}>
       <Modal transparent visible={isModalOpen} {...modalProps}>
         <View style={styles.backdrop}>
           <View style={styles.modalContent}>{children(parentProps)}</View>
         </View>
       </Modal>
-      <Pressable onPress={() => setIsModalOpen(true)}>
-        {({ pressed }) => renderIcon({ pressed })}
-      </Pressable>
-    </View>
+      <FAB
+        icon={FABIconName}
+        {...FABProps}
+        onPress={(e) => {
+          setIsModalOpen(true);
+          FABProps?.onPress && FABProps.onPress(e);
+        }}
+      />
+    </DefaultView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    // height: "100%",
+  },
   backdrop: {
     flex: 1,
     alignItems: "center",

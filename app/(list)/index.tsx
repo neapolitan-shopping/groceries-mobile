@@ -1,4 +1,11 @@
-import { FlatList, StyleSheet, RefreshControl } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  RefreshControl,
+  View as DefaultView,
+  Text as DefaultText,
+  Pressable,
+} from "react-native";
 import { Text, View } from "@/components/Themed";
 import { Link } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
@@ -6,13 +13,16 @@ import axios from "axios";
 import { baseUri } from "@/constants/BaseUrl";
 import { useState } from "react";
 import { ActivityIndicator } from "react-native-paper";
+import AddListFABModal from "@/components/AddListFABModal";
+import { MaterialIcons } from "@expo/vector-icons";
+import Colors from "@/constants/Colors";
 
 export default function ListsScreen() {
   console.log("baseUri :>> ", baseUri);
 
   const [refreshing, setRefreshing] = useState(true);
 
-  const query = useQuery({
+  const lists = useQuery({
     queryKey: ["lists"],
     queryFn: async () => {
       try {
@@ -32,20 +42,33 @@ export default function ListsScreen() {
       {refreshing ? <ActivityIndicator /> : null}
       <Text style={styles.title}>Select List</Text>
       <FlatList
+        style={styles.flatList}
         contentContainerStyle={styles.contentContainerStyle}
-        data={query.data?.list}
+        data={lists.data?.list}
         refreshControl={
           <RefreshControl
-            onRefresh={() => query.refetch()}
+            onRefresh={() => lists.refetch()}
             refreshing={refreshing}
           />
         }
         renderItem={({ item }) => (
-          <View>
-            <Text>{item.name}</Text>
-            <Link href={{ pathname: "/(list)/[id]", params: { id: item._id } }}>
-              <Text>Accedi alla tua fantastica lista con questo link</Text>
-            </Link>
+          <View style={styles.listContainer}>
+            <DefaultView style={styles.listContent}>
+              <Link
+                style={styles.listLink}
+                onLongPress={() => console.log("ciaos assi")}
+                href={{ pathname: "/(list)/[id]", params: { id: item._id } }}
+              >
+                <DefaultText ellipsizeMode="tail" numberOfLines={1}>
+                  {item.name}
+                </DefaultText>
+              </Link>
+              <Pressable>
+                <Pressable style={styles.listIcon}>
+                  <MaterialIcons name="delete-forever" size={32} />
+                </Pressable>
+              </Pressable>
+            </DefaultView>
             <View
               style={styles.separator}
               lightColor="#eee"
@@ -54,6 +77,7 @@ export default function ListsScreen() {
           </View>
         )}
       />
+      <AddListFABModal />
     </View>
   );
 }
@@ -65,20 +89,40 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: "100%",
   },
+  flatList: {
+    marginRight: "auto",
+    marginLeft: "auto",
+    width: "80%",
+  },
   contentContainerStyle: {
     flexGrow: 1,
     justifyContent: "center",
     gap: 16,
+    width: "100%",
   },
   title: {
     marginTop: 30,
     fontSize: 20,
     fontWeight: "bold",
   },
+  listContainer: {
+    width: "100%",
+  },
+  listContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  listLink: {
+    flex: 9,
+  },
+  listIcon: {
+    flex: 1,
+  },
   separator: {
     marginTop: 4,
     marginBottom: 8,
     height: 1,
-    width: "100%",
+    width: "95%",
   },
 });

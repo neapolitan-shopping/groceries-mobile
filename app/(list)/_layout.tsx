@@ -1,10 +1,9 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Tabs } from "expo-router";
 import React from "react";
-import { useClientOnlyValue } from "@/components/useClientOnlyValue";
-import { useColorScheme } from "@/components/useColorScheme";
+import { useClientOnlyValue } from "@/hooks/useClientOnlyValue";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import Colors from "@/constants/Colors";
-import AddListModal from "@/components/AddListModal/AddListModal";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarMaterialIcon(props: {
@@ -34,7 +33,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <TabBarMaterialIcon name="rule-folder" color={color} />
           ),
-          headerRight: () => <AddListModal />,
+          // headerRight: () => <AddListModal />,
         }}
       />
       <Tabs.Screen
