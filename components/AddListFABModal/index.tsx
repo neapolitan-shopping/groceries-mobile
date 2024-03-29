@@ -6,7 +6,7 @@ import {
 } from "react-native-paper";
 import { View, Text } from "../Themed";
 import { useForm, Controller } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createList } from "@/lib/fetch/list";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import FABModal from "../common/Modals/FABModal";
@@ -21,9 +21,10 @@ export default function AddListFABModal() {
   } = useForm<{
     listName: string;
   }>();
+  const queryClient = useQueryClient();
   const addListMutation = useMutation({
     mutationFn: (newList: { name: string }) => createList(newList),
-    onSuccess: (data) => console.log("data :>> ", data),
+    onSuccess: (data) => queryClient.invalidateQueries({ queryKey: ["lists"] }),
   });
 
   const onSubmit = (data: any) => {

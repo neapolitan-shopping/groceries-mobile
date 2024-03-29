@@ -8,32 +8,33 @@ import {
 } from "react-native";
 import { Text, View } from "@/components/Themed";
 import { Link } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { baseUri } from "@/constants/BaseUrl";
 import { useState } from "react";
 import { ActivityIndicator } from "react-native-paper";
 import AddListFABModal from "@/components/AddListFABModal";
 import { MaterialIcons } from "@expo/vector-icons";
+import { deleteList, getLists } from "@/lib/fetch/list";
 
 export default function ListsScreen() {
-  console.log("baseUri :>> ", baseUri);
-
   const [refreshing, setRefreshing] = useState(true);
+  const queryClient = useQueryClient();
 
   const lists = useQuery({
     queryKey: ["lists"],
     queryFn: async () => {
-      try {
-        const { data } = await axios.get(`${baseUri}/lists`);
-        return data;
-      } catch (e: any) {
-        throw new Error(e.response.data);
-      } finally {
-        setRefreshing(false);
-      }
+      const data = await getLists();
+      setRefreshing(false);
+
+      return data;
     },
     refetchOnWindowFocus: false,
+  });
+
+  const deleteListMutation = useMutation({
+    mutationFn: (itemId: string) => deleteList(itemId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["lists"] }),
   });
 
   return (
@@ -42,6 +43,7 @@ export default function ListsScreen() {
       <Text style={styles.title}>Select List</Text>
       <FlatList
         style={styles.flatList}
+        onScroll={({ nativeEvent }) => ""}
         contentContainerStyle={styles.contentContainerStyle}
         data={lists.data?.list}
         refreshControl={
@@ -63,7 +65,12 @@ export default function ListsScreen() {
                 </DefaultText>
               </Link>
               <Pressable>
-                <Pressable style={styles.listIcon}>
+                <Pressable
+                  style={styles.listIcon}
+                  onPress={() => {
+                    deleteListMutation.mutate(item._id);
+                  }}
+                >
                   <MaterialIcons name="delete-forever" size={32} />
                 </Pressable>
               </Pressable>
@@ -89,15 +96,15 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   flatList: {
-    marginRight: "auto",
     marginLeft: "auto",
-    width: "80%",
+    width: "100%",
   },
   contentContainerStyle: {
     flexGrow: 1,
     justifyContent: "center",
     gap: 16,
     width: "100%",
+    marginTop: 50,
   },
   title: {
     marginTop: 30,
@@ -105,7 +112,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   listContainer: {
-    width: "100%",
+    marginRight: "auto",
+    marginLeft: "auto",
+    width: "70%",
   },
   listContent: {
     flexDirection: "row",
