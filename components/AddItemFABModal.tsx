@@ -4,34 +4,42 @@ import {
   TextInput as MaterialTextInput,
   TouchableRipple,
 } from "react-native-paper";
-import { View, Text } from "../Themed";
+import { View, Text } from "./Themed";
 import { useForm, Controller } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createList } from "@/lib/fetch/list";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import FABModal from "../common/Modals/FABModal";
+import FABModal from "./common/Modals/FABModal";
+import { updateListItem } from "@/lib/fetch/listItem";
+import { ItemUpdateBody, UpdateItemAction } from "@/lib/types/item";
 
 const listModalBorderRadius: number = 16;
 
-export default function AddListFABModal() {
+interface AddItemFABModalProps {
+  listId: string;
+}
+
+export default function AddItemFABModal({ listId }: AddItemFABModalProps) {
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<{
-    listName: string;
+    itemName: string;
   }>();
   const queryClient = useQueryClient();
   const addListMutation = useMutation({
-    mutationFn: (newList: { name: string }) => createList(newList),
-    onSuccess: (data) => queryClient.invalidateQueries({ queryKey: ["lists"] }),
+    mutationFn: updateListItem,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["listItems"] }),
   });
 
-  const onSubmit = (data: any) => {
-    const bodyData = {
-      name: data.listName,
+  const onSubmit = ({ itemName }: { itemName: string }) => {
+    const body: ItemUpdateBody = {
+      updateAction: UpdateItemAction.add,
+      payload: {
+        itemName,
+      },
     };
-    addListMutation.mutate(bodyData);
+    addListMutation.mutate({ id: listId, body });
   };
 
   return (
@@ -46,11 +54,11 @@ export default function AddListFABModal() {
       {({ setIsModalOpen }) => (
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.titleText}>Inserisci nome lista</Text>
+            <Text style={styles.titleText}>Inserisci Nome</Text>
             <Controller
               control={control}
               defaultValue=""
-              name="listName"
+              name="itemName"
               rules={{
                 required: { value: true, message: "List name is required" },
                 maxLength: { value: 25, message: "List title is too long." },
@@ -65,9 +73,9 @@ export default function AddListFABModal() {
                     onChangeText={(txt) => onChange(txt)}
                     style={styles.textInput}
                   />
-                  {errors.listName && (
+                  {errors.itemName && (
                     <HelperText type="error">
-                      {errors.listName.message}
+                      {errors.itemName.message}
                     </HelperText>
                   )}
                 </View>

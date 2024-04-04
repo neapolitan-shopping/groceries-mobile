@@ -9,8 +9,6 @@ import {
 import { Text, View } from "@/components/Themed";
 import { Link } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { baseUri } from "@/constants/BaseUrl";
 import { useState } from "react";
 import { ActivityIndicator } from "react-native-paper";
 import AddListFABModal from "@/components/AddListFABModal";

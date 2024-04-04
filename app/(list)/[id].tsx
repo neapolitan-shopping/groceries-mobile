@@ -1,31 +1,23 @@
 import { FlatList, StyleSheet } from "react-native";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { Text, View } from "@/components/Themed";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useEffect } from "react";
-import { baseUri } from "@/constants/BaseUrl";
-import BouncyCheckbox from "@/components/BouncyCheckbox";
+import { getListItems } from "@/lib/fetch/listItem";
+import AddItemFABModal from "@/components/AddItemFABModal";
+import ListItem from "@/components/ListItem";
 
 export default function SingleListScreen() {
-  const navigation = useNavigation();
+  const { id } = useLocalSearchParams<{ id: string }>();
 
-  const { id } = useLocalSearchParams();
   const {
     data: listData,
     error,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["singleList"],
-    queryFn: async () => {
-      try {
-        const { data } = await axios.get(`${baseUri}/lists/${id}`);
-        return data;
-      } catch (e: any) {
-        throw new Error(e.response.data);
-      }
-    },
+    queryKey: ["listItems"],
+    queryFn: async () => getListItems(id),
     enabled: !!id,
   });
 
@@ -34,18 +26,6 @@ export default function SingleListScreen() {
       refetch();
     }
   }, [id]);
-
-  useEffect(() => {
-    if (listData) {
-      navigation.setOptions({
-        headerRight: () => (
-          <View>
-            <Text>{listData.name}</Text>
-          </View>
-        ),
-      });
-    }
-  }, [listData]);
 
   if (error) {
     return <Text>Ooops, something went wrong {error.message}</Text>;
@@ -76,14 +56,7 @@ export default function SingleListScreen() {
         data={listData.items}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
-            <BouncyCheckbox
-              onPress={(isChecked) => console.log("isChecked :>> ", isChecked)}
-              text={item.itemName}
-              textContainerStyle={{
-                marginLeft: 8,
-              }}
-              onLongPress={(ev) => console.log("ev :>> ", ev)} // open a modal to edit name and price
-            />
+            <ListItem item={item} />
             <View
               style={styles.separator}
               lightColor="#eee"
@@ -92,6 +65,7 @@ export default function SingleListScreen() {
           </View>
         )}
       />
+      <AddItemFABModal listId={id} />
     </View>
   );
 }
