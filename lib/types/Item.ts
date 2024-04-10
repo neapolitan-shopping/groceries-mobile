@@ -1,4 +1,11 @@
-type Item = {
+export type Item = {
+  _id: string;
+  itemName?: string;
+  price?: number;
+  checked?: boolean;
+};
+export type ItemPayload = {
+  _id?: string;
   itemName?: string;
   price?: number;
   checked?: boolean;
@@ -13,12 +20,12 @@ export enum UpdateItemAction {
 export type ItemUpdateBody =
   | {
       updateAction: UpdateItemAction.add;
-      payload: Item;
+      payload: ItemPayload;
     }
   | {
       updateAction: UpdateItemAction.edit;
       itemId: string;
-      payload: Item;
+      payload: ItemPayload;
     }
   | {
       updateAction: UpdateItemAction.delete;

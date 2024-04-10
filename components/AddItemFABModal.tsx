@@ -10,7 +10,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import FABModal from "./common/Modals/FABModal";
 import { updateListItem } from "@/lib/fetch/listItem";
-import { ItemUpdateBody, UpdateItemAction } from "@/lib/types/item";
+import { ItemUpdateBody, UpdateItemAction } from "@/lib/types/Item";
 
 const listModalBorderRadius: number = 16;
 
@@ -19,13 +19,7 @@ interface AddItemFABModalProps {
 }
 
 export default function AddItemFABModal({ listId }: AddItemFABModalProps) {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<{
-    itemName: string;
-  }>();
+  const { control, handleSubmit } = useForm<{ itemName: string }>();
   const queryClient = useQueryClient();
   const addListMutation = useMutation({
     mutationFn: updateListItem,
@@ -60,10 +54,13 @@ export default function AddItemFABModal({ listId }: AddItemFABModalProps) {
               defaultValue=""
               name="itemName"
               rules={{
-                required: { value: true, message: "List name is required" },
-                maxLength: { value: 25, message: "List title is too long." },
+                required: { value: true, message: "Item name is required" },
+                maxLength: { value: 25, message: "Name is too long." },
               }}
-              render={({ field: { onChange, value } }) => (
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => (
                 <View style={styles.controllerItemContainer}>
                   <MaterialTextInput
                     mode="flat"
@@ -73,10 +70,8 @@ export default function AddItemFABModal({ listId }: AddItemFABModalProps) {
                     onChangeText={(txt) => onChange(txt)}
                     style={styles.textInput}
                   />
-                  {errors.itemName && (
-                    <HelperText type="error">
-                      {errors.itemName.message}
-                    </HelperText>
+                  {error && (
+                    <HelperText type="error">{error.message}</HelperText>
                   )}
                 </View>
               )}

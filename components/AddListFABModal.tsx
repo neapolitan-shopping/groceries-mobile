@@ -14,11 +14,7 @@ import FABModal from "./common/Modals/FABModal";
 const listModalBorderRadius: number = 16;
 
 export default function AddListFABModal() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<{
+  const { control, handleSubmit } = useForm<{
     listName: string;
   }>();
   const queryClient = useQueryClient();
@@ -55,7 +51,10 @@ export default function AddListFABModal() {
                 required: { value: true, message: "List name is required" },
                 maxLength: { value: 25, message: "List title is too long." },
               }}
-              render={({ field: { onChange, value } }) => (
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => (
                 <View style={styles.controllerItemContainer}>
                   <MaterialTextInput
                     mode="flat"
@@ -65,10 +64,8 @@ export default function AddListFABModal() {
                     onChangeText={(txt) => onChange(txt)}
                     style={styles.textInput}
                   />
-                  {errors.listName && (
-                    <HelperText type="error">
-                      {errors.listName.message}
-                    </HelperText>
+                  {error && (
+                    <HelperText type="error">{error.message}</HelperText>
                   )}
                 </View>
               )}

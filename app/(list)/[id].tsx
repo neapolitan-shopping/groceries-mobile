@@ -1,11 +1,18 @@
 import { FlatList, StyleSheet } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { Text, View } from "@/components/Themed";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { getListItems } from "@/lib/fetch/listItem";
+import {
+  getListItems,
+  updateListItem,
+  updateLocalListItem,
+} from "@/lib/fetch/listItem";
 import AddItemFABModal from "@/components/AddItemFABModal";
 import ListItem from "@/components/ListItem";
+import { queryListClient } from "../_layout";
+
+const dayInMilliseconds = 1000 * 60 * 60 * 24;
 
 export default function SingleListScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,6 +26,23 @@ export default function SingleListScreen() {
     queryKey: ["listItems"],
     queryFn: async () => getListItems(id),
     enabled: !!id,
+    staleTime: dayInMilliseconds,
+    gcTime: dayInMilliseconds,
+  });
+
+  const updateItemMutation = useMutation({
+    mutationKey: ["listItems"],
+    mutationFn: updateListItem,
+    onMutate: async ({ id, body }) => {
+      await queryListClient.cancelQueries({
+        queryKey: ["listItems"],
+        exact: true,
+      });
+      updateLocalListItem({ id, body });
+    },
+    onSuccess: (data) => {
+      console.log("QUERY RUN SUCCESSFULLYWITH THIS DATA", data);
+    },
   });
 
   useEffect(() => {
@@ -56,7 +80,11 @@ export default function SingleListScreen() {
         data={listData.items}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
-            <ListItem item={item} />
+            <ListItem
+              listId={id}
+              itemMutation={updateItemMutation}
+              item={item}
+            />
             <View
               style={styles.separator}
               lightColor="#eee"

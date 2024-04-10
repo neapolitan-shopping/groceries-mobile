@@ -3,8 +3,28 @@ import { TextInput as MaterialTextInput } from "react-native-paper";
 import { View as DefaultView } from "react-native";
 import BouncyCheckbox from "./BouncyCheckbox";
 import { Controller, useForm } from "react-hook-form";
+import { Item, ItemUpdateBody, UpdateItemAction } from "@/lib/types/Item";
+import { UseMutationResult } from "@tanstack/react-query";
 
-export default function ListItem({ item }: any) {
+interface ListItemProps {
+  item: Item;
+  itemMutation: UseMutationResult<
+    any,
+    Error,
+    {
+      id: string;
+      body: ItemUpdateBody;
+    },
+    void
+  >;
+  listId: string;
+}
+
+export default function ListItem({
+  item,
+  itemMutation,
+  listId,
+}: ListItemProps) {
   const [isEdit, setIsEdit] = useState(false);
   const {
     control,
@@ -36,7 +56,19 @@ export default function ListItem({ item }: any) {
               right={
                 <MaterialTextInput.Icon
                   icon="check"
-                  onPress={() => setIsEdit(false)}
+                  onPress={async () => {
+                    setIsEdit(false);
+                    itemMutation.mutateAsync({
+                      id: listId,
+                      body: {
+                        updateAction: UpdateItemAction.edit,
+                        payload: {
+                          itemName: value,
+                        },
+                        itemId: item._id,
+                      },
+                    });
+                  }}
                 />
               }
             />

@@ -9,7 +9,15 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import {
+  QueryClientProvider,
+  QueryClient,
+  onlineManager,
+} from "@tanstack/react-query";
+import NetInfo from "@react-native-community/netinfo";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -44,19 +52,39 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
-const queryClient = new QueryClient();
+export const queryListClient = new QueryClient();
+const persister = createAsyncStoragePersister({
+  storage: AsyncStorage,
+  throttleTime: 3000,
+});
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
+  useEffect(() => {
+    return NetInfo.addEventListener((state) => {
+      const status = !!state.isConnected;
+      console.log('connection status: is Online :>> ', status);
+      onlineManager.setOnline(status);
+    });
+  }, []);
+
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <QueryClientProvider client={queryClient}>
+      <PersistQueryClientProvider
+        client={queryListClient}
+        onSuccess={() => {
+          queryListClient
+            .resumePausedMutations()
+            .then(() => queryListClient.invalidateQueries());
+        }}
+        persistOptions={{ persister }}
+      >
         <Stack>
           <Stack.Screen name="(list)" options={{ headerShown: false }} />
           <Stack.Screen name="modal" options={{ presentation: "modal" }} />
         </Stack>
-      </QueryClientProvider>
+      </PersistQueryClientProvider>
     </ThemeProvider>
   );
 }
