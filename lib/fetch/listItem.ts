@@ -4,7 +4,7 @@ import { Item, ItemUpdateBody, UpdateItemAction } from "../types/Item";
 import { queryListClient } from "@/app/_layout";
 import { ShopList } from "../types/ShopList";
 
-export const getListItems = async (id: string) => {
+export const getListItems = async (id: string): Promise<ShopList> => {
   try {
     const { data } = await axios.get(`${baseUri}/lists/${id}`);
     return data;
@@ -55,7 +55,7 @@ export const updateLocalListItem = async ({
           };
         }
         case UpdateItemAction.add: {
-          singleList.items.push(body.payload as any);
+          singleList.items.push(body.payload as Item);
 
           return singleList;
         }

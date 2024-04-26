@@ -11,6 +11,8 @@ import {
 import AddItemFABModal from "@/components/AddItemFABModal";
 import ListItem from "@/components/ListItem";
 import { queryListClient } from "../_layout";
+import { ShopList } from "@/lib/types/ShopList";
+import { Item } from "@/lib/types/Item";
 
 const dayInMilliseconds = 1000 * 60 * 60 * 24;
 
@@ -25,6 +27,16 @@ export default function SingleListScreen() {
   } = useQuery({
     queryKey: ["listItems"],
     queryFn: async () => getListItems(id),
+    select: (data): ShopList => {
+      const checkbasedItemSort = data.items.slice().sort((a, b) => {
+        if (a.checked === b.checked) {
+          return 0;
+        }
+        return a.checked ? 1 : -1;
+      });
+
+      return { ...data, items: checkbasedItemSort };
+    },
     enabled: !!id,
     staleTime: dayInMilliseconds,
     gcTime: dayInMilliseconds,
@@ -63,7 +75,7 @@ export default function SingleListScreen() {
     return <Text style={styles.container}>Select a list to start</Text>;
   }
 
-  if (!listData || listData.length === 0) {
+  if (!listData) {
     return <Text style={styles.container}>No Data found </Text>;
   }
 
@@ -72,6 +84,7 @@ export default function SingleListScreen() {
       <Text style={styles.title}>{listData.name}</Text>
       <FlatList
         style={styles.flatList}
+        keyExtractor={(item) => item._id}
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: "center",
@@ -79,7 +92,7 @@ export default function SingleListScreen() {
         }}
         data={listData.items}
         renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
+          <View style={styles.itemContainer} key={item._id}>
             <ListItem
               listId={id}
               itemMutation={updateItemMutation}
@@ -93,7 +106,7 @@ export default function SingleListScreen() {
           </View>
         )}
       />
-      <AddItemFABModal listId={id} />
+      <AddItemFABModal listId={id} itemMutation={updateItemMutation} />
     </View>
   );
 }

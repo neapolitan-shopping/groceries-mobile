@@ -4,12 +4,6 @@ export type Item = {
   price?: number;
   checked?: boolean;
 };
-export type ItemPayload = {
-  _id?: string;
-  itemName?: string;
-  price?: number;
-  checked?: boolean;
-};
 
 export enum UpdateItemAction {
   add = "add_item",
@@ -20,12 +14,12 @@ export enum UpdateItemAction {
 export type ItemUpdateBody =
   | {
       updateAction: UpdateItemAction.add;
-      payload: ItemPayload;
+      payload: Partial<Item>;
     }
   | {
       updateAction: UpdateItemAction.edit;
       itemId: string;
-      payload: ItemPayload;
+      payload: Partial<Item>;
     }
   | {
       updateAction: UpdateItemAction.delete;

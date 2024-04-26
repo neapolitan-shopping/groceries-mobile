@@ -62,15 +62,13 @@ export default function ListsScreen() {
                   {item.name}
                 </DefaultText>
               </Link>
-              <Pressable>
-                <Pressable
-                  style={styles.listIcon}
-                  onPress={() => {
-                    deleteListMutation.mutate(item._id);
-                  }}
-                >
-                  <MaterialIcons name="delete-forever" size={32} />
-                </Pressable>
+              <Pressable
+                style={styles.listIcon}
+                onPress={() => {
+                  deleteListMutation.mutate(item._id);
+                }}
+              >
+                <MaterialIcons name="delete-forever" size={32} />
               </Pressable>
             </DefaultView>
             <View

@@ -6,34 +6,41 @@ import {
 } from "react-native-paper";
 import { View, Text } from "./Themed";
 import { useForm, Controller } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { UseMutationResult } from "@tanstack/react-query";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import FABModal from "./common/Modals/FABModal";
-import { updateListItem } from "@/lib/fetch/listItem";
 import { ItemUpdateBody, UpdateItemAction } from "@/lib/types/Item";
-
+import ObjectID from "bson-objectid";
 const listModalBorderRadius: number = 16;
 
 interface AddItemFABModalProps {
   listId: string;
+  itemMutation: UseMutationResult<
+    any,
+    Error,
+    {
+      id: string;
+      body: ItemUpdateBody;
+    },
+    void
+  >;
 }
 
-export default function AddItemFABModal({ listId }: AddItemFABModalProps) {
+export default function AddItemFABModal({
+  listId,
+  itemMutation,
+}: AddItemFABModalProps) {
   const { control, handleSubmit } = useForm<{ itemName: string }>();
-  const queryClient = useQueryClient();
-  const addListMutation = useMutation({
-    mutationFn: updateListItem,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["listItems"] }),
-  });
 
   const onSubmit = ({ itemName }: { itemName: string }) => {
     const body: ItemUpdateBody = {
       updateAction: UpdateItemAction.add,
       payload: {
+        _id: ObjectID().toHexString(),
         itemName,
       },
     };
-    addListMutation.mutate({ id: listId, body });
+    itemMutation.mutate({ id: listId, body });
   };
 
   return (
